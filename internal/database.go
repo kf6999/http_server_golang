@@ -43,3 +43,28 @@ func (c Client) createDB() error {
 	}
 	return nil
 }
+
+func (c Client) updateDB(db databaseSchema) error {
+	dat, err := json.Marshal(db)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(c.dbPath, dat, 0600)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c Client) readDb() (databaseSchema, error) {
+	dat, err := os.ReadFile(c.dbPath)
+	if err != nil {
+		return databaseSchema{}, err
+	}
+	db := databaseSchema{}
+	err = json.Unmarshal(dat, &db)
+	if err != nil {
+		return databaseSchema{}, err
+	}
+	return db, err
+}
